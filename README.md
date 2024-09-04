@@ -1,14 +1,29 @@
 # bagmaps
 **B**ioinformatics **A**pplied to **G**enomic **M**apping of **A**ntibiotic resistant bacterial **P**athogens, active **S**urveillance and national studies
 
-PhD candidate: Paula Guijarro-Sánchez. Xunta de Galicia Predoctoral Student Grant – IN606A- 2021/021
+## 🎓 Proyecto de Tesis Doctoral
 
-## Supervisors:
+Este proyecto es parte de una tesis doctoral en bioinformática centrada en el análisis de resistencia a antibióticos en bacterias patógenas.
 
-- Dr. Alejandro Beceiro Casas (SERGAS)
-- Dr. Carlos Fernandez-Lozano (UDC)
+👩‍🔬 **PhD candidate:** Paula Guijarro-Sánchez
+🏆 Xunta de Galicia Predoctoral Student Grant – IN606A- 2021/021
 
-# 🧬 Pipeline de Análisis Genómico para Acinetobacter
+### 👥 Supervisores:
+
+- 🩺 Dr. Alejandro Beceiro Casas (SERGAS)
+- 💻 Dr. Carlos Fernandez-Lozano (UDC)
+
+## 🏆 Publicación Destacada
+
+Los resultados obtenidos con este pipeline han sido publicados en una prestigiosa revista científica:
+
+📚 **Revista:** Eurosurveillance (D1 en Epidemiología)
+🔗 **DOI:** [10.2807/1560-7917.ES.2024.29.15.2300352](https://www.eurosurveillance.org/content/10.2807/1560-7917.ES.2024.29.15.2300352)
+👩‍🔬 **Co-primera autora:** Paula Guijarro-Sánchez
+
+Esta publicación destaca la importancia y el impacto del trabajo realizado, validando la eficacia del pipeline desarrollado en el análisis de resistencia a antibióticos en Acinetobacter species.
+
+## 🎯 Propósito del Análisis
 
 Pipeline completo y semi-automático para el análisis genómico de especies de Acinetobacter, procesando lecturas cortas (Illumina) y largas (Nanopore).
 
@@ -46,7 +61,7 @@ El pipeline se divide en cuatro etapas principales:
 - 💊 Análisis de resistencia antimicrobiana (ResFinder, CARD-RGI)
 - 📄 Generación de informes detallados
 
-## 🗂 Estructura del Repositorio 
+## 🗂 Estructura del Repositorio
 ```
 bagmaps/
 ├── scripts/
