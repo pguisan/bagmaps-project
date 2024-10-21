@@ -1,67 +1,73 @@
 # bagmaps
 **B**ioinformatics **A**pplied to **G**enomic **M**apping of **A**ntibiotic resistant bacterial **P**athogens, active **S**urveillance and national studies
 
-## 🎓 Proyecto de Tesis Doctoral
+## 🎓 Doctoral Thesis Project
 
-Este proyecto es parte de una tesis doctoral en bioinformática centrada en el análisis de resistencia a antibióticos en bacterias patógenas.
+This project is part of a doctoral thesis in bioinformatics focused on the analysis of antibiotic resistance in pathogenic bacteria.
 
-👩‍🔬 **PhD candidate:** Paula Guijarro-Sánchez
+👩‍🔬 **PhD candidate**: Paula Guijarro-Sánchez
 🏆 Xunta de Galicia Predoctoral Student Grant – IN606A- 2021/021
 
-### 👥 Supervisores:
+### 👥 Supervisors:
 
 - 🩺 Dr. Alejandro Beceiro Casas (SERGAS)
 - 💻 Dr. Carlos Fernandez-Lozano (UDC)
 
-## 🏆 Publicación Destacada
+## 🏆 Featured Publication
 
-Los resultados obtenidos con este pipeline han sido publicados en una prestigiosa revista científica:
+The results obtained with this pipeline have been published in a prestigious scientific journal:
 
-📚 **Revista:** Eurosurveillance (D1 en Epidemiología)
-🔗 **DOI:** [10.2807/1560-7917.ES.2024.29.15.2300352](https://www.eurosurveillance.org/content/10.2807/1560-7917.ES.2024.29.15.2300352)
-👩‍🔬 **Co-primera autora:** Paula Guijarro-Sánchez
+📚 **Journal**: Eurosurveillance (D1 in Epidemiology)
+🔗 **DOI**: 10.2807/1560-7917.ES.2024.29.15.2300352
+👩‍🔬 **Co-first author**: Paula Guijarro-Sánchez
 
-Esta publicación destaca la importancia y el impacto del trabajo realizado, validando la eficacia del pipeline desarrollado en el análisis de resistencia a antibióticos en Acinetobacter species.
+This publication highlights the importance and impact of the work carried out, validating the effectiveness of the pipeline developed for the analysis of antibiotic resistance in Acinetobacter species.
 
-## 🎯 Propósito del Análisis
+## 🎯 Purpose of the Analysis
 
-Pipeline completo y semi-automático para el análisis genómico de especies de Acinetobacter, procesando lecturas cortas (Illumina) y largas (Nanopore).
+Complete and semi-automatic pipeline for genomic analysis of Acinetobacter species, processing short (Illumina) and long (Nanopore) reads. The pipeline evaluates depth, coverage, and quality to automatically select the best assembly method among various options from both Unicycler and Dragonflye. This selection is optimized based on the input data type:
 
-## 📋 Tabla de Contenidos
+-Short reads only (Illumina)
+-Long reads only (Nanopore)
+-Hybrid approach (both Illumina and Nanopore)
 
-- [Visión General del Pipeline](#visión-general-del-pipeline)
-- [Características Principales](#características-principales)
-- [Estructura del Repositorio](#estructura-del-repositorio)
-- [Requisitos](#requisitos)
-- [Instalación](#instalación)
-- [Uso](#uso)
-- [Descripción Detallada de los Módulos](#descripción-detallada-de-los-módulos)
-- [Personalización](#personalización)
-- [Contribuciones](#contribuciones)
+This adaptive approach ensures the most appropriate assembly strategy is employed for each dataset, optimizing the quality and completeness of the resulting genomic assemblies.
 
-## 🔬 Visión General del Pipeline
+## 📋 Table of Contents
 
-El pipeline se divide en cuatro etapas principales:
+Pipeline Overview
+Main Features
+Repository Structure
+Requirements
+Installation
+Usage
+Detailed Module Description
+Customization
+Contributions
 
-1. **Preprocesamiento**: Limpieza y control de calidad de las lecturas.
-2. **Análisis de cobertura y calidad**: Evaluación de la calidad de secuenciación y cálculo de cobertura.
-3. **Ensamblaje**: Construcción y evaluación de genomas.
-4. **Análisis comparativo**: Identificación taxonómica y análisis de resistencia.
+## 🔬 Pipeline Overview
 
-## ✨ Características Principales 
+The pipeline is divided into four main stages:
 
-- 🧹 Preprocesamiento de lecturas (Trimmomatic, Porechop)
-- 🔍 Evaluación de calidad (FastQC)
-- 📊 Cálculo de cobertura genómica
-- 🧩 Ensamblaje de genomas (Unicycler, Dragonflye)
-- 📈 Evaluación de ensamblajes (QUAST, CheckM2)
-- 🔬 Análisis de similitud genómica (FastANI)
-- 🧫 Identificación taxonómica (rMLST, ANI)
-- 📝 Anotación genómica (Bakta)
-- 💊 Análisis de resistencia antimicrobiana (ResFinder, CARD-RGI)
-- 📄 Generación de informes detallados
+1. **Preprocessing**: Cleaning and quality control of reads.
+2. **Coverage and quality analysis**: Evaluation of sequencing quality and coverage calculation.
+3. **Assembly**: Genome construction and evaluation.
+4. **Comparative analysis**: Taxonomic identification and resistance analysis.
 
-## 🗂 Estructura del Repositorio
+## ✨ Main Features
+
+🧹 Read preprocessing (Trimmomatic, Porechop)
+🔍 Quality assessment (FastQC)
+📊 Genomic coverage calculation
+🧩 Genome assembly (Unicycler, Dragonflye)
+📈 Assembly evaluation (QUAST, CheckM2)
+🔬 Genomic similarity analysis (FastANI)
+🧫 Taxonomic identification (rMLST, ANI)
+📝 Genomic annotation (Bakta)
+💊 Antimicrobial resistance analysis (ResFinder, CARD-RGI)
+📄 Generation of detailed reports
+
+## 🗂 Repository Structure
 ```
 bagmaps/
 ├── scripts/
@@ -83,90 +89,94 @@ bagmaps/
     └── input/
 ```
 
-## 🛠 Requisitos
-- Bash
-- Mamba/Conda
-- Herramientas bioinformáticas: FastQC, Trimmomatic, Porechop, Unicycler, Dragonflye, QUAST, CheckM2, FastANI, Bakta, ResFinder, CARD-RGI
-- Bases de datos actualizadas para Bakta, ResFinder y CARD
+## 🛠 Requirements
+-Bash
+-Mamba/Conda
+-Bioinformatics tools: FastQC, Trimmomatic, Porechop, Unicycler, Dragonflye, QUAST, CheckM2, FastANI, Bakta, ResFinder, CARD-RGI
+-Updated databases for Bakta, ResFinder, and CARD
 
-## 📦 Instalación
+## 📦 Installation
 
-1. Clonar el repositorio:
+1. Clone the repository:
 ```bash
 git clone https://github.com/MALL-Machine-Learning-in-Live-Sciences/bagmaps.git
 ```
 
-2. Instalar Mamba si aún no esta instalado:
+2. Install Mamba if not already installed:
 ```bash
 conda install mamba -n base -c conda-forge
 ```
 
-3. Crear entornos e instalar herramientas:
+3. Create environments and install tools:
 ```bash
-# Entorno para control de calidad y preprocesamiento
+# Environment for quality control and preprocessing
 mamba create -n qc_env -c bioconda fastqc=0.11.9 trimmomatic=0.39 porechop=0.2.4
 
-# Entornos para ensamblaje
+# Environments for assembly
 mamba create -n unicycler_env -c bioconda unicycler=0.4.8
 mamba create -n dragonflye_env -c bioconda dragonflye=1.0.12
 
-# Entorno para evaluación de ensamblajes
+# Environment for assembly evaluation
 mamba create -n quast_env -c bioconda quast=5.0.2
 
-# Entorno para análisis de identidad de nucleótidos
+# Environment for nucleotide identity analysis
 mamba create -n fastani_env -c bioconda fastani=1.32
 
-# Entornos para análisis de resistencia
+# Environments for resistance analysis
 mamba create -n resfinder_env -c bioconda resfinder=4.1.11
 mamba create -n rgi_env -c bioconda rgi=5.2.1
 
-# Entorno para anotación genómica
+# Environment for genomic annotation
 mamba create -n bakta_env -c bioconda bakta=1.5.1
 
-4. Configuración de bases de datos:
-   Para ResFinder, CARD y Bakta, asegúrese de descargar y configurar las bases de datos necesarias según las instrucciones oficiales de cada herramienta.
-## 🚀 Uso
+4. Database configuration:
+For ResFinder, CARD, and Bakta, make sure to download and configure the necessary databases according to the official instructions for each tool.
 
-1. Coloque sus datos de secuenciación en la carpeta `data/input/`
+## 🚀 Usage
 
-2. Ejecute el pipeline completo:
+1. Place your sequencing data in the `data/input/` folder
+
+2. Run the complete pipeline:
 ```bash
 bash scripts/pipeline.sh
 ```
 
-3. Para ejecutar módulos específicos:
+3. To run specific modules:
 ```bash
 bash scripts/preprocess.sh
 bash scripts/execute_assemblies.sh
 bash scripts/run_resistance_analysis.sh
 ```
-Cada script utiliza internamente `mamba run` para ejecutar las herramientas en el entorno apropiado, por lo que no es necesario activar los entornos manualmente.
+Each script internally uses mamba run to execute the tools in the appropriate environment, so it's not necessary to manually activate the environments.
 
-## 📘 Descripción Detallada de los Módulos
+## 📘 Detailed Module Description
 
-### Preprocesamiento (preprocess.sh)
-- Utiliza FastQC, Trimmomatic y Porechop
-- Parámetros optimizados para lecturas cortas y largas
-- Genera informes de calidad antes y después del preprocesamiento
+### Preprocessing (preprocess.sh)
+-Uses FastQC, Trimmomatic, and Porechop
+-Optimized parameters for short and long reads
+-Generates quality reports before and after preprocessing
 
-### Análisis de Cobertura y Calidad
-- Calcula la cobertura genómica (quick_coverage_calculation.sh)
-- Genera informes de calidad de secuenciación (paired_end_report.sh)
-- Combina los informes para una visión integral (combine_reports.sh)
+### Coverage and Quality Analysis
 
-### Ensamblaje
-- Recomienda estrategias de ensamblaje (recommended_assemblies.sh)
-- Ejecuta ensamblajes con Unicycler o Dragonflye (execute_assemblies.sh)
-- Evalúa la calidad de los ensamblajes con QUAST y CheckM2
+-Calculates genomic coverage (quick_coverage_calculation.sh)
+-Generates sequencing quality reports (paired_end_report.sh)
+-Combines reports for a comprehensive view (combine_reports.sh)
 
-### Análisis Comparativo
-- Extrae referencias de Acinetobacter (extract_acinetobacter_references.sh)
-- Realiza análisis de ANI con FastANI (acinetobacter_fastani_analysis.sh)
-- Identifica genes de resistencia con ResFinder y CARD-RGI (run_resistance_analysis.sh)
-- Anota genomas con Bakta (run_bakta_annotation.sh)
+### Assembly
 
-## ⚙️ Personalización
-Revise los scripts individuales para ajustar parámetros específicos como tamaño del genoma, umbrales de calidad, etc.
+-Recommends assembly strategies (recommended_assemblies.sh)
+-Executes assemblies with Unicycler or Dragonflye (execute_assemblies.sh)
+-Evaluates assembly quality with QUAST and CheckM2
 
-## 👥 Contribuciones
-¡Contribuciones son bienvenidas! Por favor, abra un issue para discutir cambios mayores.
+### Comparative Analysis
+
+-Extracts Acinetobacter references (extract_acinetobacter_references.sh)
+-Performs ANI analysis with FastANI (acinetobacter_fastani_analysis.sh)
+-Identifies resistance genes with ResFinder and CARD-RGI (run_resistance_analysis.sh)
+-Annotates genomes with Bakta (run_bakta_annotation.sh)
+
+## ⚙️ Customization
+Review individual scripts to adjust specific parameters such as genome size, quality thresholds, etc.
+
+## 👥 Contributions
+Contributions are welcome! Please open an issue to discuss major changes.
