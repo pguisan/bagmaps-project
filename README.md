@@ -28,7 +28,9 @@ This publication highlights the importance and impact of the work carried out, v
 Complete and semi-automatic pipeline for genomic analysis of Acinetobacter species, processing short (Illumina) and long (Nanopore) reads. The pipeline evaluates depth, coverage, and quality to automatically select the best assembly method among various options from both Unicycler and Dragonflye. This selection is optimized based on the input data type:
 
 -Short reads only (Illumina)
+
 -Long reads only (Nanopore)
+
 -Hybrid approach (both Illumina and Nanopore)
 
 This adaptive approach ensures the most appropriate assembly strategy is employed for each dataset, optimizing the quality and completeness of the resulting genomic assemblies.
@@ -57,14 +59,23 @@ The pipeline is divided into four main stages:
 ## ✨ Main Features
 
 🧹 Read preprocessing (Trimmomatic, Porechop)
+
 🔍 Quality assessment (FastQC)
+
 📊 Genomic coverage calculation
+
 🧩 Genome assembly (Unicycler, Dragonflye)
+
 📈 Assembly evaluation (QUAST, CheckM2)
+
 🔬 Genomic similarity analysis (FastANI)
+
 🧫 Taxonomic identification (rMLST, ANI)
+
 📝 Genomic annotation (Bakta)
+
 💊 Antimicrobial resistance analysis (ResFinder, CARD-RGI)
+
 📄 Generation of detailed reports
 
 ## 🗂 Repository Structure
@@ -91,8 +102,11 @@ bagmaps/
 
 ## 🛠 Requirements
 -Bash
+
 -Mamba/Conda
+
 -Bioinformatics tools: FastQC, Trimmomatic, Porechop, Unicycler, Dragonflye, QUAST, CheckM2, FastANI, Bakta, ResFinder, CARD-RGI
+
 -Updated databases for Bakta, ResFinder, and CARD
 
 ## 📦 Installation
@@ -153,26 +167,35 @@ Each script internally uses mamba run to execute the tools in the appropriate en
 
 ### Preprocessing (preprocess.sh)
 -Uses FastQC, Trimmomatic, and Porechop
+
 -Optimized parameters for short and long reads
+
 -Generates quality reports before and after preprocessing
 
 ### Coverage and Quality Analysis
 
 -Calculates genomic coverage (quick_coverage_calculation.sh)
+
 -Generates sequencing quality reports (paired_end_report.sh)
+
 -Combines reports for a comprehensive view (combine_reports.sh)
 
 ### Assembly
 
 -Recommends assembly strategies (recommended_assemblies.sh)
+
 -Executes assemblies with Unicycler or Dragonflye (execute_assemblies.sh)
+
 -Evaluates assembly quality with QUAST and CheckM2
 
 ### Comparative Analysis
 
 -Extracts Acinetobacter references (extract_acinetobacter_references.sh)
+
 -Performs ANI analysis with FastANI (acinetobacter_fastani_analysis.sh)
+
 -Identifies resistance genes with ResFinder and CARD-RGI (run_resistance_analysis.sh)
+
 -Annotates genomes with Bakta (run_bakta_annotation.sh)
 
 ## ⚙️ Customization
