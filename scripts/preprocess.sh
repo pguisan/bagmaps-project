@@ -85,6 +85,10 @@ process_short_reads() {
     local output_subdir="$output_dir/${subdir}_trimmed"
     mkdir -p "$output_subdir"
     
+    # Crear subdirectorio específico para FastQC
+    local fastqc_subdir="$fastqc_after_dir/${subdir}_trimmed"
+    mkdir -p "$fastqc_subdir"
+    
     local output_forward_paired="$output_subdir/${base_name}_R1_paired_trimmed.fastq.gz"
     local output_reverse_paired="$output_subdir/${base_name}_R2_paired_trimmed.fastq.gz"
     
@@ -110,8 +114,8 @@ process_short_reads() {
     # Eliminar archivos unpaired
     rm -f "${output_forward_paired%.fastq.gz}_unpaired.fastq.gz" "${output_reverse_paired%.fastq.gz}_unpaired.fastq.gz"
     
-    # FastQC después del preprocesado
-    "$MAMBA_PATH" run -n qc_env fastqc -o "$fastqc_after_dir" --threads $THREADS --memory 4000 "$output_forward_paired" "$output_reverse_paired"
+    # FastQC después del preprocesado (ahora en el subdirectorio específico)
+    "$MAMBA_PATH" run -n qc_env fastqc -o "$fastqc_subdir" --threads $THREADS --memory 4000 "$output_forward_paired" "$output_reverse_paired"
 }
 
 # Función para procesar long reads
@@ -122,6 +126,10 @@ process_long_reads() {
     
     local output_subdir="$output_dir/${subdir}_trimmed"
     mkdir -p "$output_subdir"
+    
+    # Crear subdirectorio específico para FastQC
+    local fastqc_subdir="$fastqc_after_dir/${subdir}_trimmed"
+    mkdir -p "$fastqc_subdir"
     
     local output_file="$output_subdir/${base_name}_trimmed.fastq.gz"
     
@@ -140,8 +148,8 @@ process_long_reads() {
     "$MAMBA_PATH" run -n qc_env porechop -i "$input_file" -o "$output_file" \
         --discard_middle --require_two_barcodes --barcode_threshold 80 --threads $THREADS
     
-    # FastQC después del preprocesado
-    "$MAMBA_PATH" run -n qc_env fastqc -o "$fastqc_after_dir" --threads $THREADS --memory 4000 "$output_file"
+    # FastQC después del preprocesado (ahora en el subdirectorio específico)
+    "$MAMBA_PATH" run -n qc_env fastqc -o "$fastqc_subdir" --threads $THREADS --memory 4000 "$output_file"
 }
 
 # Buscar y procesar todos los pares de archivos short reads

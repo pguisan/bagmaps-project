@@ -102,7 +102,7 @@ if ! touch "$output_file" 2>/dev/null; then
 fi
 
 # Escribir el encabezado con formato tabular
-printf "Muestra\tCoverage (Short Reads)\tCoverage (Long Reads)\tCoverage Total\tNúmero de Short Reads\tLongitud Media Short Reads\tNúmero de Long Reads\tLongitud Media Long Reads\n" > "$output_file"
+printf "Sample\tShort Read Coverage\tLong Read Coverage\tTotal Coverage\tNumber of Short Reads\tAvg Short Read Length\tNumber of Long Reads\tAvg Long Read Length\n" > "$output_file"
 
 # Contar el número total de muestras
 total_samples=$(find "$trimmed_dir" -maxdepth 1 -type d | wc -l)

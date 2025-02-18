@@ -1,110 +1,104 @@
 #!/bin/bash
 
-# Directorio de informes
-REPORT_DIR="../reports"
-
-# Archivo de entrada
-INPUT_FILE="$REPORT_DIR/combined_report.txt"
-
-# Archivo de salida
-OUTPUT_FILE="$REPORT_DIR/combined_report_with_recommendations.txt"
-
-# Función para verificar si un valor es numérico
-is_numeric() {
-    case "$1" in
-        ''|*[!0-9.]*) return 1 ;;
-        *) return 0 ;;
-    esac
+compare_float() {
+    awk -v n1="$1" -v n2="$3" "BEGIN {exit !(n1 $2 n2)}"
+    return $?
 }
 
-# Función para recomendar el ensamblaje
 recommend_assembly() {
-    local short_qual=$1
-    local long_qual=$2
-    local short_cov=$3
-    local long_cov=$4
-    local comb_cov=$5
+    local short_qual="$1"
+    local short_cov="$2"
+    local long_qual="$3"
+    local long_cov="$4"
+    local total_cov="$5"
 
-    if ! is_numeric "$short_qual"; then short_qual=0; fi
-    if ! is_numeric "$long_qual"; then long_qual=0; fi
-    if ! is_numeric "$short_cov"; then short_cov=0; fi
-    if ! is_numeric "$long_cov"; then long_cov=0; fi
-    if ! is_numeric "$comb_cov"; then comb_cov=0; fi
+    # Solo long reads
+    if [ "$short_cov" = "NA" ] || [ "$short_cov" = "0" ]; then
+        if compare_float "$long_cov" ">=" "50"; then
+            echo "dragonflye --assembler flye --opts '--iterations 1'"
+        elif compare_float "$long_cov" ">=" "30"; then
+            echo "dragonflye --assembler flye --min-readlen 3000"
+        else
+            echo "dragonflye --assembler flye --opts '--iterations 2 --min-readlen 2000'"
+        fi
 
-    if [ "$long_cov" = "0" ] && [ "$short_cov" != "0" ]; then
-        if (( $(echo "$short_cov >= 100" | bc -l) )); then
-            echo "unicycler_short_bold_cov"
-        elif (( $(echo "$short_cov > 30" | bc -l) )); then
+    # Solo short reads  
+    elif [ "$long_cov" = "NA" ] || [ "$long_cov" = "0" ]; then
+        if compare_float "$short_cov" ">=" "70" && compare_float "$short_qual" ">=" "30"; then
+            echo "unicycler_short_bold"
+        else
             echo "unicycler_short_normal"
-        elif (( $(echo "$short_cov >= 20" | bc -l) )) && (( $(echo "$short_qual >= 30" | bc -l) )); then
-            echo "unicycler_short_normal"
-        else
-            echo "unicycler_short_conservative"
         fi
-    elif [ "$short_cov" = "0" ] && [ "$long_cov" != "0" ]; then
-        if (( $(echo "$long_cov >= 100" | bc -l) )); then
-            echo "dragonflye_long_only_high_cov"
-        elif (( $(echo "$long_qual >= 15" | bc -l) )); then
-            echo "dragonflye_long_only_normal"
-        else
-            echo "dragonflye_long_only_conservative"
-        fi
-    elif [ "$short_cov" != "0" ] && [ "$long_cov" != "0" ]; then
-        local short_long_ratio
-        if (( $(echo "$long_cov > 0" | bc -l) )); then
-            short_long_ratio=$(echo "$short_cov / $long_cov" | bc -l)
-        else
-            short_long_ratio=0
-        fi
-        if (( $(echo "$comb_cov >= 100" | bc -l) )) && (( $(echo "$short_qual >= 30" | bc -l) )) && (( $(echo "$long_qual >= 20" | bc -l) )); then
-            echo "unicycler_hybrid_bold_cov"
-        elif (( $(echo "$long_cov >= 50" | bc -l) )); then
-            echo "dragonflye_polish_high_cov"
-        elif (( $(echo "$long_cov >= 30" | bc -l) )); then
-            echo "dragonflye_polish"
-        elif (( $(echo "$comb_cov >= 50" | bc -l) )); then
-            echo "unicycler_hybrid_bold_cov"
-        elif (( $(echo "$comb_cov > 20" | bc -l) )); then
-            if (( $(echo "$short_long_ratio > 2" | bc -l) )); then
-                echo "unicycler_hybrid_normal_short_biased"
-            elif (( $(echo "$short_long_ratio < 0.5" | bc -l) )); then
-                echo "unicycler_hybrid_normal_long_biased"
-            else
-                echo "unicycler_hybrid_normal"
-            fi
-        else
-            echo "unicycler_hybrid_conservative"
-        fi
+
+    # Hybrid
     else
-        echo "insufficient_coverage"
+        # Primero verificar alta cobertura de long reads
+        if compare_float "$long_cov" ">=" "50"; then
+            echo "dragonflye --assembler flye --polypolish 1"
+        else
+            # Calculate ratio between coverages
+            ratio=$(awk -v short="$short_cov" -v long="$long_cov" 'BEGIN {printf "%.4f", short/long}')
+
+            if compare_float "$ratio" ">" "2"; then
+                # Dominan short reads
+                if compare_float "$short_qual" ">=" "30" && compare_float "$total_cov" ">=" "50"; then
+                    echo "unicycler_hybrid_bold"
+                else
+                    echo "unicycler_hybrid_normal" 
+                fi
+            elif compare_float "$ratio" "<" "0.5"; then
+                # Dominan long reads
+                if compare_float "$long_qual" ">=" "15"; then
+                    echo "dragonflye --assembler flye --polypolish 2"
+                else
+                    echo "dragonflye --assembler flye --polypolish 1"
+                fi
+            else
+                # Balance entre tipos
+                if compare_float "$total_cov" ">=" "50" && compare_float "$short_qual" ">=" "30"; then
+                    echo "unicycler_hybrid_bold"
+                else
+                    echo "unicycler_hybrid_normal"
+                fi
+            fi
+        fi
     fi
 }
 
-# Verificar si el archivo de entrada existe
-if [ ! -f "$INPUT_FILE" ]; then
-    echo "Error: El archivo de entrada $INPUT_FILE no existe."
-    exit 1
-fi
+REPORT_DIR="../reports"
+INPUT_FILE="$REPORT_DIR/combined_report.txt"
+OUTPUT_FILE="$REPORT_DIR/combined_report_with_recommendations.txt"
 
-# Leer el encabezado y escribirlo en el archivo de salida
-head -n 1 "$INPUT_FILE" | awk '{print $0 "\tRecommended Assembly"}' > "$OUTPUT_FILE"
+# Crear encabezado
+echo -e "Sample\tShort Quality\tShort Coverage\tLong Quality\tLong Coverage\tTotal Coverage\tRecommended Assembly" > "$OUTPUT_FILE"
 
-# Procesar cada línea del archivo de entrada
-tail -n +2 "$INPUT_FILE" | while read -r line
-do
-    # Extraer los valores de cada columna
-    sample=$(echo "$line" | awk '{print $1}')
-    short_qual=$(echo "$line" | awk '{print $2}')
-    long_qual=$(echo "$line" | awk '{print $3}')
-    short_cov=$(echo "$line" | awk '{print $4}')
-    long_cov=$(echo "$line" | awk '{print $5}')
-    comb_cov=$(echo "$line" | awk '{print $6}')
+# Procesar cada línea y generar recomendaciones
+while IFS=$'\t' read -r sample short_qual long_qual short_cov long_cov total_cov gc_short gc_long; do
+    # Saltar la línea del encabezado
+    if [ "$sample" = "Sample" ]; then
+        continue
+    fi
+    
+    # Convertir "N/A" a "0" para el procesamiento
+    short_qual=${short_qual/N\/A/0}
+    short_cov=${short_cov/N\/A/0}
+    long_qual=${long_qual/N\/A/0}
+    long_cov=${long_cov/N\/A/0}
+    total_cov=${total_cov/N\/A/0}
+    
+    # Obtener recomendación
+    recommendation=$(recommend_assembly "$short_qual" "$short_cov" "$long_qual" "$long_cov" "$total_cov")
+    
+    # Restaurar "N/A" para la salida
+    [ "$short_qual" = "0" ] && short_qual="N/A"
+    [ "$short_cov" = "0" ] && short_cov="N/A"
+    [ "$long_qual" = "0" ] && long_qual="N/A"
+    [ "$long_cov" = "0" ] && long_cov="N/A"
+    [ "$total_cov" = "0" ] && total_cov="N/A"
+    
+    # Escribir al archivo de salida
+    printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+        "$sample" "$short_qual" "$short_cov" "$long_qual" "$long_cov" "$total_cov" "$recommendation" >> "$OUTPUT_FILE"
+done < "$INPUT_FILE"
 
-    # Obtener la recomendación
-    recommendation=$(recommend_assembly "$short_qual" "$long_qual" "$short_cov" "$long_cov" "$comb_cov")
-
-    # Escribir la línea original más la recomendación en el archivo de salida, asegurando la tabulación
-    printf "%-15s %-15s %-15s %-15s %-15s %-15s %-35s\n" "$sample" "$short_qual" "$long_qual" "$short_cov" "$long_cov" "$comb_cov" "$recommendation" >> "$OUTPUT_FILE"
-done
-
-echo "Proceso completado. Revisa $OUTPUT_FILE para ver las recomendaciones."
+echo "Process completed. Check $OUTPUT_FILE for recommendations."
